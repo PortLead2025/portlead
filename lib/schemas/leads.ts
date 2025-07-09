@@ -15,4 +15,16 @@ export const UploadLeadSchema = z.object({
   status: z.enum(["sold", "available", "considering"]).nullable().optional(),
 });
 
-export type NewLead = z.infer<typeof UploadLeadSchema>;
+export type Lead = z.infer<typeof UploadLeadSchema>;
+
+// export const ContactLeadSchema = UploadLeadSchema.pick({
+//   email: true,
+//   phone_number: true,
+// });
+
+export const ContactLeadSchema = z.object({
+  phone_number: z.union([z.string(), z.number()]).nullable().optional(),
+  email: z.string().nullable().optional(),
+});
+
+export type ContactLead = z.infer<typeof ContactLeadSchema>;

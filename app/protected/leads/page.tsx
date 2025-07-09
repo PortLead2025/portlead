@@ -1,4 +1,6 @@
-import UploadForm from "@/components/leads/uploadForm";
+import AddLeads from "@/components/leads/add-leads";
+import CheckLeads from "@/components/leads/check-leads";
+import PageHeader from "@/components/page-header";
 import { createClient } from "@/utils/supabase/server";
 
 type LeadsPageProps = {};
@@ -11,13 +13,13 @@ export default async function LeadsPage({}: LeadsPageProps) {
   } = await supabase.auth.getUser();
 
   return (
-    <div className="flex flex-col gap-2 items-start">
-      <h2 className="font-bold text-2xl mb-4">Leads</h2>
-      {/* <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-        {JSON.stringify(user, null, 2)}
-      </pre> */}
+    <div className="flex-1 flex flex-col">
+      <PageHeader current="leads" />
 
-      <UploadForm />
+      <div className="mt-4 flex gap-4">
+        <CheckLeads />
+        <AddLeads />
+      </div>
     </div>
   );
 }

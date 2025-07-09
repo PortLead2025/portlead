@@ -4,43 +4,45 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/helpers";
 import { Button } from "../ui/button";
-import { NewLead } from "@/lib/schemas/leads";
+import { Lead } from "@/lib/schemas/leads";
 import { insertLeads } from "./actions";
+import ActionBox from "../action-box";
 
-type UploadFormProps = {};
+type AddLeadsProps = {};
 
 export type Row = Record<string, string | number>;
 
 export type UploadRequest = {
   sheetName: string;
-  rows: NewLead[];
+  rows: Lead[];
 }[];
 
-export default function UploadForm({}: UploadFormProps) {
+export default function AddLeads({}: AddLeadsProps) {
   const [xlsxFile, setXlsxFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [newLeads, setNewLeads] = useState<NewLead[] | null>(null);
-  const [isSuccessConverting, setIsSuccessConverting] = useState(false);
+  const [converting, setConverting] = useState(false);
+  const [newLeads, setNewLeads] = useState<Lead[] | null>(null);
   const [inserting, setInserting] = useState(false);
+  const [duplicates, setDuplicates] = useState<Lead[] | null>(null);
 
-  const handleResult = (data: NewLead[] | null) => {
+  const handleResult = (data: Lead[] | null) => {
     setNewLeads(data);
   };
-
-  console.log({ newLeads });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    // setError(null);
+
     if (!file) return;
     setXlsxFile(file);
+    setDuplicates(null);
   };
 
   const handleInputClick = () => {
-    fileInputRef?.current?.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+      fileInputRef.current.click();
+    }
   };
 
   const handleConvertToJson = async () => {
@@ -50,8 +52,7 @@ export default function UploadForm({}: UploadFormProps) {
     }
 
     try {
-      setUploading(true);
-      setIsSuccessConverting(false);
+      setConverting(true);
 
       const formData = new FormData();
       if (xlsxFile !== null) formData.set("file", xlsxFile);
@@ -68,12 +69,11 @@ export default function UploadForm({}: UploadFormProps) {
         return;
       }
       const response = (await uploadRequest.json()) as UploadRequest;
-      setIsSuccessConverting(true);
       handleResult(response?.map((item) => item.rows).flat() || null);
     } catch (e) {
-      console.log("Trouble uploading file", e);
+      console.log("Trouble converting file", e);
     } finally {
-      setUploading(false);
+      setConverting(false);
     }
   };
 
@@ -85,11 +85,12 @@ export default function UploadForm({}: UploadFormProps) {
 
     try {
       setInserting(true);
+      setDuplicates(null);
       const {
         error: insertError,
         success,
         inserted,
-        duplicates,
+        duplicates: duplicatesRes,
         details,
       } = await insertLeads(newLeads);
 
@@ -98,10 +99,17 @@ export default function UploadForm({}: UploadFormProps) {
         toast.error("Inserting failed");
         return;
       }
-      console.log({ inserted, duplicates, details });
+
+      if (!!duplicatesRes?.length) {
+        setDuplicates(duplicatesRes);
+      }
+
       inserted === 0
         ? toast.warning("No new leads to insert")
         : success && toast.success("Leads successfully inserted!");
+
+      setXlsxFile(null);
+      setNewLeads(null);
     } catch (e) {
       console.log("Trouble inserting file", e);
     } finally {
@@ -116,41 +124,59 @@ export default function UploadForm({}: UploadFormProps) {
   }, [xlsxFile]);
 
   return (
-    <div className="flex items-center justify-center gap-4">
-      <p>Загрузить:</p>
+    <ActionBox title="New leads">
+      <div className="flex gap-2">
+        <form className="flex w-full flex-col">
+          <input
+            ref={fileInputRef}
+            className="sr-only"
+            type="file"
+            accept=".xlsx"
+            onChange={handleFileChange}
+          />
 
-      <form className="flex flex-col">
-        <input
-          ref={fileInputRef}
-          className="sr-only"
-          type="file"
-          accept=".xlsx"
-          onChange={handleFileChange}
-        />
-
-        <div className="flex gap-2 items-center justify-center">
           <Button
-            disabled={uploading}
+            disabled={converting || inserting}
             type="button"
             className={cn(
-              isSuccessConverting &&
-                "bg-green-300 text-black  hover:bg-green-300"
+              xlsxFile && "bg-green-300 text-black  hover:bg-green-300"
             )}
             onClick={handleInputClick}
           >
-            {xlsxFile ? xlsxFile.name : "Upload xlsx file"}
+            {xlsxFile ? xlsxFile.name : "Upload xlsx"}
           </Button>
-        </div>
-      </form>
+        </form>
 
-      <Button
-        disabled={!newLeads || uploading}
-        className={cn("")}
-        onClick={handleInsertLeads}
-      >
-        {/* {uploading ? "Processing..." : "Convert to json"} */}
-        Upload to DB
-      </Button>
-    </div>
+        <Button
+          disabled={!newLeads || converting || inserting}
+          className={cn("w-full")}
+          onClick={handleInsertLeads}
+        >
+          {inserting ? "Processing..." : "Send to DB"}
+        </Button>
+      </div>
+
+      {!!duplicates?.length && (
+        <div>
+          <h3 className="text-[18px] underline">
+            {duplicates.length} Duplicates:
+          </h3>
+
+          <ul className="max-h-[200px] overflow-auto mt-2 pr-4">
+            {duplicates?.map(({ first_name, email, phone_number }) => {
+              return (
+                <li
+                  key={String(first_name) + Math.random()}
+                  className="flex justify-between"
+                >
+                  <span>{email || "--"}</span>{" "}
+                  <span>{phone_number || "--"}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+    </ActionBox>
   );
 }

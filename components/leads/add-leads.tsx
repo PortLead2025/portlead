@@ -91,7 +91,6 @@ export default function AddLeads({}: AddLeadsProps) {
         success,
         inserted,
         duplicates: duplicatesRes,
-        details,
       } = await insertLeads(newLeads);
 
       if (insertError) {
@@ -148,11 +147,12 @@ export default function AddLeads({}: AddLeadsProps) {
         </form>
 
         <Button
+          variant="secondary"
           disabled={!newLeads || converting || inserting}
           className={cn("w-full")}
           onClick={handleInsertLeads}
         >
-          {inserting ? "Processing..." : "Send to DB"}
+          {inserting ? "Processing..." : "Send!"}
         </Button>
       </div>
 

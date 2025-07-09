@@ -10,7 +10,7 @@ import { createClient } from "@/utils/supabase/server";
 import z from "zod";
 
 export async function insertLeads(newLeads: Lead[]) {
-  const validated = z.array(UploadLeadSchema).parse(newLeads); // if !valid throw err
+  const validated = z.array(UploadLeadSchema).parse(newLeads);
   // обработать ошибку валидации
 
   const supabase = await createClient();

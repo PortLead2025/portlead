@@ -1,4 +1,4 @@
-import { cn } from "@/lib/helpers";
+import { cn } from "@/lib/utils";
 import { ComponentPropsWithoutRef } from "react";
 
 type PageTitleProps = ComponentPropsWithoutRef<"h1"> & {};

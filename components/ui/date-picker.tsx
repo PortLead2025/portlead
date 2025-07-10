@@ -10,17 +10,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/helpers";
+import { cn } from "@/lib/utils";
 
 type DatePickerProps = {
-  label: string;
+  label?: string;
   date: Date | undefined;
   setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   className?: string;
 };
 
 export function DatePicker({
-  label = "Select date",
+  label,
   date,
   setDate,
   className,
@@ -29,12 +29,14 @@ export function DatePicker({
 
   return (
     <div className={cn("flex flex-col gap-1", className)}>
-      <Label
-        htmlFor="date"
-        className="px-1 text-gray-500 leading-normal font-medium"
-      >
-        {label}
-      </Label>
+      {label && (
+        <Label
+          htmlFor="date"
+          className="px-1 text-gray-500 leading-normal font-medium"
+        >
+          {label ?? "Select date"}
+        </Label>
+      )}
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>

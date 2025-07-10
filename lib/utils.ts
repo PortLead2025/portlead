@@ -6,17 +6,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const getCurrencySymbol = (currency: "USD" | "EUR" | "USDT") => {
-  switch (currency) {
-    case "USD":
-      return "$";
-    case "EUR":
-      return "€";
-    case "USDT":
-      return "₮";
-    default:
-      return "$";
-  }
+export const excelDateToJSDate = (excelDate: number): Date => {
+  const utcDays = Math.floor(excelDate - 25569); // 25569 — offset to 01.01.1970
+  const utcValue = utcDays * 86400; // sec
+  return new Date(utcValue * 1000); // ms
 };
 
 export function formatExcelDate(serial: number): string {
@@ -26,13 +19,13 @@ export function formatExcelDate(serial: number): string {
   return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 }
 
-export function excelDateToISO(serial: number): string {
-  const parsed = XLSX.SSF.parse_date_code(serial);
-  if (!parsed) return "";
-  const { y, m, d, h, m: min, s } = parsed;
-  const date = new Date(Date.UTC(y, m - 1, d, h, min, s));
-  return date.toISOString();
-}
+// export function excelDateToISO(serial: number): string {
+//   const parsed = XLSX.SSF.parse_date_code(serial);
+//   if (!parsed) return "";
+//   const { y, m, d, h, m: min, s } = parsed;
+//   const date = new Date(Date.UTC(y, m - 1, d, h, min, s));
+//   return date.toISOString();
+// }
 
 export function excelSerialToISO(serial: number): string {
   const epoch = new Date(1899, 11, 30); // Excel bug-based epoch

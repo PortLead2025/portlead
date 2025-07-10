@@ -2,14 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { cn, downloadBlob } from "@/lib/helpers";
+import { cn, downloadBlob } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { ContactLead } from "@/lib/schemas/leads";
 import { checkLeads } from "./actions";
 import ActionBox from "../action-box";
-import { LucideDownload } from "lucide-react";
+import DownloadButton from "../download-button";
 
-type CheckLeadsProps = {};
+type CheckLeadsProps = {
+  className?: string;
+};
 
 export type Row = Record<string, string | number>;
 
@@ -18,7 +20,7 @@ export type UploadRequest = {
   rows: ContactLead[];
 }[];
 
-export default function CheckLeads({}: CheckLeadsProps) {
+export default function CheckLeads({ className }: CheckLeadsProps) {
   const [xlsxFile, setXlsxFile] = useState<File | null>(null);
   const [converting, setConverting] = useState(false);
   const [leads, setLeads] = useState<ContactLead[] | null>(null);
@@ -141,7 +143,7 @@ export default function CheckLeads({}: CheckLeadsProps) {
   };
 
   return (
-    <ActionBox title="Check leads">
+    <ActionBox className={cn("w-1/2", className)} title="Check leads">
       <div className="flex gap-2">
         <form className="flex w-full flex-col">
           <input
@@ -165,12 +167,11 @@ export default function CheckLeads({}: CheckLeadsProps) {
         </form>
 
         <Button
-          variant="secondary"
           disabled={!leads || converting || checking}
           className={cn("w-full")}
           onClick={handleInsertLeads}
         >
-          {checking ? "Processing..." : "Check!"}
+          {checking ? "Processing..." : "Check"}
         </Button>
       </div>
 
@@ -180,13 +181,9 @@ export default function CheckLeads({}: CheckLeadsProps) {
             <span className="underline">
               <span className="text-green-500">{uniques.length}</span> Uniques:
             </span>
-            <button
-              className="text-[14px] flex items-center gap-1 hover:text-blue-400"
-              type="button"
+            <DownloadButton
               onClick={() => downloadXlsx(uniques, "uniques.xlsx")}
-            >
-              <LucideDownload size={16} /> Download
-            </button>
+            />
           </h3>
 
           <ul className="max-h-[200px] overflow-auto mt-2 pr-4">
@@ -211,13 +208,9 @@ export default function CheckLeads({}: CheckLeadsProps) {
               <span className="text-red-400">{duplicates.length}</span>{" "}
               Duplicates:
             </span>{" "}
-            <button
-              className="text-[14px] flex items-center gap-1 hover:text-blue-400"
-              type="button"
+            <DownloadButton
               onClick={() => downloadXlsx(duplicates, "duplicates.xlsx")}
-            >
-              <LucideDownload size={16} /> Download
-            </button>
+            />
           </h3>
 
           <ul className="max-h-[200px] overflow-auto mt-2 pr-4">

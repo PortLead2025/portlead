@@ -6,6 +6,7 @@ import {
   ContactLead,
   ContactLeadSchema,
 } from "@/lib/schemas/leads";
+import { excelDateToJSDate } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/server";
 import z from "zod";
 
@@ -69,9 +70,13 @@ export async function insertLeads(newLeads: Lead[]) {
   }
 
   try {
-    const { error: insertError } = await supabase
-      .from("leads")
-      .insert(uniqueLeads);
+    const { error: insertError } = await supabase.from("leads").insert(
+      uniqueLeads.map((lead) => ({
+        ...lead,
+        status: "free",
+        date: lead.date ? excelDateToJSDate(lead.date).toISOString() : null,
+      }))
+    );
 
     if (insertError) {
       console.log({ insertError });

@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { cn } from "@/lib/helpers";
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Lead } from "@/lib/schemas/leads";
 import { insertLeads } from "./actions";
 import ActionBox from "../action-box";
 
-type AddLeadsProps = {};
+type AddLeadsProps = {
+  className?: string;
+};
 
 export type Row = Record<string, string | number>;
 
@@ -17,7 +19,7 @@ export type UploadRequest = {
   rows: Lead[];
 }[];
 
-export default function AddLeads({}: AddLeadsProps) {
+export default function AddLeads({ className }: AddLeadsProps) {
   const [xlsxFile, setXlsxFile] = useState<File | null>(null);
   const [converting, setConverting] = useState(false);
   const [newLeads, setNewLeads] = useState<Lead[] | null>(null);
@@ -123,7 +125,7 @@ export default function AddLeads({}: AddLeadsProps) {
   }, [xlsxFile]);
 
   return (
-    <ActionBox title="New leads">
+    <ActionBox className={cn("w-1/2", className)} title="Add leads">
       <div className="flex gap-2">
         <form className="flex w-full flex-col">
           <input
@@ -147,12 +149,11 @@ export default function AddLeads({}: AddLeadsProps) {
         </form>
 
         <Button
-          variant="secondary"
           disabled={!newLeads || converting || inserting}
           className={cn("w-full")}
           onClick={handleInsertLeads}
         >
-          {inserting ? "Processing..." : "Send!"}
+          {inserting ? "Processing..." : "Send"}
         </Button>
       </div>
 

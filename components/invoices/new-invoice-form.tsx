@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, getCurrencySymbol } from "@/lib/helpers";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ComponentPropsWithoutRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -67,7 +67,7 @@ export default function NewInvoiceForm({
   const taxPercent = Number(form.watch("tax_rate") || 0);
   const taxValue = ((subtotal - discountValue) / 100) * taxPercent;
   const total = subtotal - discountValue + taxValue;
-  const symbol = getCurrencySymbol(form.watch("currency"));
+  const symbol = "$";
 
   const onOpenDialog = (data: InvoiceData) => {
     setInvoiceData(data);

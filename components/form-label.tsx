@@ -1,4 +1,4 @@
-import { cn } from "@/lib/helpers";
+import { cn } from "@/lib/utils";
 import { ComponentPropsWithoutRef } from "react";
 import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import ErrorMessage from "./error-message";

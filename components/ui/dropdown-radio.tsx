@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/helpers";
+import { cn } from "@/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 
 type DropdownRadioProps<T extends string> = {

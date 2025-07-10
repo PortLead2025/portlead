@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/helpers";
+import { cn } from "@/lib/utils";
 import Image, { StaticImageData } from "next/image";
 import { ComponentPropsWithoutRef, useEffect, useState } from "react";
 

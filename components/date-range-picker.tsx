@@ -4,6 +4,7 @@ import * as React from "react";
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
+import { XCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -52,12 +53,21 @@ export default function DatePickerWithRange({
             ) : (
               <span>Pick a date</span>
             )}
+            {date !== undefined && (
+              <XCircle
+                size={18}
+                className="ml-auto"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDate(undefined);
+                }}
+              />
+            )}
           </Button>
         </PopoverTrigger>
 
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
-            // initialFocus
             mode="range"
             defaultMonth={date?.from}
             selected={date}

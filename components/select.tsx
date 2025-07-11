@@ -16,6 +16,7 @@ type SelectBaseProps = {
   setSelected: (value: string) => void;
   triggerClassName?: string;
   contentClassName?: string;
+  value?: string | undefined;
 };
 
 export default function SelectBase({
@@ -25,9 +26,10 @@ export default function SelectBase({
   setSelected,
   triggerClassName,
   contentClassName,
+  value,
 }: SelectBaseProps) {
   return (
-    <Select onValueChange={(value) => setSelected(value)}>
+    <Select value={value} onValueChange={(value) => setSelected(value)}>
       <SelectTrigger className={cn("min-w-[120px] w-full", triggerClassName)}>
         <SelectValue placeholder={placeholder ?? "Select"} />
       </SelectTrigger>

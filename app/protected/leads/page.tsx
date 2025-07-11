@@ -1,10 +1,14 @@
 import Filters from "@/components/leads/filters";
+import LeadsPage from "@/components/leads/leads-page";
 import PageHeader from "@/components/page-header";
+import { DropdownValues } from "@/lib/types";
 import { createClient } from "@/utils/supabase/server";
 
-type LeadsPageProps = {};
+type LeadsPageProps = {
+  dropdownValues: DropdownValues;
+};
 
-export default async function LeadsPage({}: LeadsPageProps) {
+export default async function Leads({}: LeadsPageProps) {
   const supabase = await createClient();
 
   const {
@@ -43,9 +47,8 @@ export default async function LeadsPage({}: LeadsPageProps) {
   return (
     <div className="flex-1 flex flex-col">
       <PageHeader current="leads" />
-      <Filters
+      <LeadsPage
         dropdownValues={{ geoList, countryList, langList, hookedList }}
-        className="mt-4"
       />
     </div>
   );

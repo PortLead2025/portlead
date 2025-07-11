@@ -1,6 +1,6 @@
 export const ACTIONS_LIST = [
-  { value: "depositor", label: "DEP" },
-  { value: "registration", label: "REG" },
+  { value: "dep", label: "DEP" },
+  { value: "reg", label: "REG" },
   { value: "cold", label: "COLD" },
 ];
 

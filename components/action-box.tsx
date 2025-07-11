@@ -13,7 +13,7 @@ export default function ActionBox({
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 rounded-xl border border-black p-4",
+        "flex flex-col gap-2 rounded-xl border border-gray-300 p-4",
         className
       )}
     >
